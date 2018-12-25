@@ -73,19 +73,15 @@ DigitToWord = Struct.new(:phone_number) do
 		results = []
 		@converted_chunk_words.each do |final_words|
 			if final_words.length == 1
-				results << final_words.flatten
+				results << final_words.flatten.first
 			else
 				cross_product = final_words[0].product(final_words[1])
 				results << cross_product 
 			end
 		end
-		p results
+		results
 	end
 
 end
-Benchmark.bm do |x|
-	x.report do 
-		test = DigitToWord.new("2282668687").perform
-	end
-end
+
 
