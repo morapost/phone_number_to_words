@@ -1,4 +1,5 @@
 require 'pry'
+require 'benchmark'
 DigitToWord = Struct.new(:phone_number) do
 	POSSIBLE_COMBINATION_LENGTH = [3,4,5,6,7,10]
 	WORD_NUM_HASH = { "A" => "2", "B" => "2", "C" => "2", "D" => "3", "E" => "3", "F" => "3", "G" => "4", "H" => "4", "I" => "4", "J" => "5",
@@ -11,7 +12,8 @@ DigitToWord = Struct.new(:phone_number) do
 	def perform
 		read_dictionary
 		split_number_into_chunks
-		print_output
+		convert_chunks_to_words
+		print_results
 	end
 
 	def read_dictionary
@@ -50,12 +52,40 @@ DigitToWord = Struct.new(:phone_number) do
 		end
 	end
 
-	def print_output
-		@chunks.each do |chunk|
-			binding.pry
+	def convert_chunks_to_words
+		
+		@converted_chunk_words = []
+		
+		@chunks.each do |patterns|
+			found_words = []
+			patterns.each do |pattern|
+				chunk_has_matches = @chunks_dict[pattern]
+	        	found_words << chunk_has_matches if chunk_has_matches && chunk_has_matches.length > 0
+			end
+			next unless found_words.length == patterns.length
+			@converted_chunk_words << found_words
+			#binding.pry
 		end
+		@converted_chunk_words
+	end
+
+	def print_results
+		results = []
+		@converted_chunk_words.each do |final_words|
+			if final_words.length == 1
+				results << final_words.flatten
+			else
+				cross_product = final_words[0].product(final_words[1])
+				results << cross_product 
+			end
+		end
+		p results
+	end
+
+end
+Benchmark.bm do |x|
+	x.report do 
+		test = DigitToWord.new("2282668687").perform
 	end
 end
-
-test = DigitToWord.new("2282668687").perform
 
