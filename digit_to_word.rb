@@ -10,7 +10,8 @@ DigitToWord = Struct.new(:phone_number) do
 
 	def perform
 		read_dictionary
-		binding.pry
+		split_number_into_chunks
+		print_output
 	end
 
 	def read_dictionary
@@ -32,7 +33,29 @@ DigitToWord = Struct.new(:phone_number) do
 		#binding.pry
 		numbers
 	end
+
+	def split_number_into_chunks
+		@chunks_dict = {}
+		@chunks = []
+		CHUNK_PATTERNS.each do |chunks|
+			new_chunk = []
+			chunks.each do |chunk|
+				phone_number_chunk = phone_number[chunk]
+				found_words_from_dict = @dict[phone_number_chunk] 
+				@chunks_dict[phone_number_chunk] = found_words_from_dict if found_words_from_dict
+				new_chunk << phone_number_chunk
+			end
+			@chunks << new_chunk
+
+		end
+	end
+
+	def print_output
+		@chunks.each do |chunk|
+			binding.pry
+		end
+	end
 end
 
-test = DigitToWord.new("228").perform
+test = DigitToWord.new("2282668687").perform
 
